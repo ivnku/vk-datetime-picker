@@ -1,0 +1,146 @@
+#vk-datetime-picker {
+    background-color: #d3d3d3;
+    padding: 15px;
+}
+
+.vdp-wrapper {
+    background-color: #fff;
+    width: 100%;
+    padding: 5px;
+}
+
+.vdp-tabs-switcher {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.vdp-btn,
+.vdp-button:focus,
+.vdp-button:active {
+    border: none;
+    outline: none;
+    cursor: pointer;
+    color: #4A76A8;
+}
+
+.vdp-tabs-switcher .vdp-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.3em;
+    font-size: 5vw;
+    width: 100%;
+    padding: 4% 0;
+    background-color: #fff;
+    border: 1px solid #4A76A8;
+}
+
+.vdp-tabs-switcher .vdp-btn span {
+    margin-left: 10px;
+}
+
+.vdp-tabs-switcher div {
+    width: 16%;
+}
+
+.vdp-tabs-switcher div svg {
+    width: 100%;
+    height: 100%;
+}
+
+/*============= Year and Month switchers styles ===============*/
+
+#year-switcher,
+#month-switcher {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 5px;
+}
+
+#year-switcher {
+    margin-bottom: 10px;
+}
+
+.vdp-btn.previous {
+    justify-self: flex-start;
+}
+
+.vdp-btn.next {
+    justify-self: flex-end;
+}
+
+#year-switcher span,
+#month-switcher span {
+    display: inline-flex;
+    align-items: center;
+    font-size: 1.8em;
+    font-size: 5.8vw;
+    color: #4A76A8;
+}
+
+#year-switcher svg,
+#month-switcher svg {
+    width: 100%;
+    height: 100%;
+}
+
+#year-switcher button,
+#month-switcher button {
+    width: 10%;
+    display: block;
+    padding: 4px;
+    background-color: transparent;
+}
+
+
+
+/*============= End Of Year and Month switchers styles ===============*/
+
+.vdp-tabs {
+    background-color: #fff;
+}
+
+.calendar-tab, .time-tab {
+    display: none;
+}
+
+/*============= Calendar styles ===============*/
+#vdp-calendar {
+    width: 100%;
+    margin: 3% 0;
+    border-collapse: collapse;
+}
+
+#vdp-calendar td {
+    border: 1px solid #ced1d4;
+    text-align: center;
+    width: 14%;
+    padding: 4% 0;
+    font-size: 1.4em;
+    font-size: 5vw;
+}
+
+thead {
+    font-weight: bold;
+    color: #4A76A8;
+}
+
+/*============= End Of Calendar styles ========*/
+
+#submit-date {
+    width: 100%;
+    padding: 5% 0;
+    color: #fff;
+    background-color: #4A76A8;
+    font-size: 1.3em;
+    font-size: 5vw;
+}
+
+.active {
+    display: block;
+}
+
+.vdp-btn.active {
+    background-color: #4A76A8;
+    color: #fff;
+}
