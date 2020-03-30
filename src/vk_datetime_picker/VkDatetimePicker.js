@@ -3,8 +3,6 @@ import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import {VDPService} from './VDPService'
 import './main.css'
-import Icon24Recent from '@vkontakte/icons/dist/24/recent';
-import Icon28CalendarOutline from '@vkontakte/icons/dist/28/calendar_outline'
 import { ReactComponent as NextBtn } from'./img/next.svg'
 import { ReactComponent as PreviousBtn } from './img/previous.svg'
 import { ReactComponent as CalendarBtn } from './img/calendar.svg'
