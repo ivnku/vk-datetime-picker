@@ -9,11 +9,15 @@ import { ReactComponent as PreviousBtn } from './img/previous.svg'
 import { ReactComponent as CalendarIcon } from './img/calendar.svg'
 import { ReactComponent as TimeIcon } from './img/time.svg'
 import Slider from '@vkontakte/vkui/dist/components/Slider/Slider'
+import Snackbar from '@vkontakte/vkui/dist/components/Snackbar/Snackbar'
+import Avatar from '@vkontakte/vkui/dist/components/Avatar/Avatar'
+import Icon16Done from '@vkontakte/icons/dist/16/done';
 
 const VkDatetimePicker = ({ onSave }) => {
     let vdp = new VDPService()
     
     const [activeTab, setActiveTab]         = useState('calendar')
+    const [snackbar, setSnackbar]           = useState(null)
     const [chosenYear, setChosenYear]       = useState(vdp.currentYear())
     const [chosenMonth, setChosenMonth]     = useState(vdp.currentMonth(true))
     const [chosenDay, setChosenDay]         = useState(vdp.currentDay())
@@ -55,6 +59,15 @@ const VkDatetimePicker = ({ onSave }) => {
 
     const handleSave = () => {
         onSave()
+        setSnackbar(
+            <Snackbar
+                layout="vertical"
+                onClose={() => {setSnackbar(null)}}
+                before={<Avatar size={24} style={{ backgroundColor: 'var(--accent)'}}><Icon16Done fill="#fff" width={14} height={14} /></Avatar>}
+            >
+                Дата <b>{chosenDate}</b> добавлена
+            </Snackbar>
+        )
     }
 
     return (
@@ -142,7 +155,7 @@ const VkDatetimePicker = ({ onSave }) => {
                 </div>
                 
                 <button onClick={() => handleSave()} id="submit-date" className="vdp-btn">Добавить дату</button>
-
+                {snackbar}
             </div>
         </div>
         
