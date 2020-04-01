@@ -5,8 +5,8 @@ import VkDatetimePicker from './vk_datetime_picker/VkDatetimePicker';
 function App() {
 
     return (
-        <div className="App">
-            <VkDatetimePicker />
+        <div className="App" style={{height:90 + '%'}}>
+            <VkDatetimePicker onSave={() => console.log("TODO on save")} />
         </div>
     );
 }

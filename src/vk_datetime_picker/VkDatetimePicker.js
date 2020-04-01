@@ -2,88 +2,155 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import {VDPService} from './VDPService'
+import '@vkontakte/vkui/dist/vkui.css'
 import './main.css'
 import { ReactComponent as NextBtn } from'./img/next.svg'
 import { ReactComponent as PreviousBtn } from './img/previous.svg'
-import { ReactComponent as CalendarBtn } from './img/calendar.svg'
-import { ReactComponent as TimeBtn } from './img/time.svg'
+import { ReactComponent as CalendarIcon } from './img/calendar.svg'
+import { ReactComponent as TimeIcon } from './img/time.svg'
+import Slider from '@vkontakte/vkui/dist/components/Slider/Slider'
 
-const VkDatetimePicker = props => {
+const VkDatetimePicker = ({ onSave }) => {
     let vdp = new VDPService()
-    let currentDate = vdp.currentDate
-    const [chosenDate, setChosenDate] = useState(currentDate)
+    
+    const [activeTab, setActiveTab]         = useState('calendar')
+    const [chosenYear, setChosenYear]       = useState(vdp.currentYear())
+    const [chosenMonth, setChosenMonth]     = useState(vdp.currentMonth(true))
+    const [chosenDay, setChosenDay]         = useState(vdp.currentDay())
+    const [chosenHours, setChosenHours]     = useState(0)
+    const [chosenMinutes, setChosenMinutes] = useState(0)
+    const [calendarMonth, setCalendarMonth] = useState(vdp.generateCalendarMonth(chosenYear, vdp.getMonthOrdinal(chosenMonth)))
+    const [chosenDate, setChosenDate]       = useState(vdp.createFullDate(chosenDay, vdp.getMonthOrdinal(chosenMonth), chosenYear, chosenHours, chosenMinutes))
+
+    useEffect(() => {
+        setCalendarMonth(vdp.generateCalendarMonth(chosenYear, vdp.getMonthOrdinal(chosenMonth)))
+        setChosenDate(vdp.createFullDate(chosenDay, vdp.getMonthOrdinal(chosenMonth), chosenYear, chosenHours, chosenMinutes))
+    }, [chosenYear, chosenMonth, chosenDay])
+
+    useEffect(() => {
+        setChosenDate(vdp.createFullDate(chosenDay, vdp.getMonthOrdinal(chosenMonth), chosenYear, chosenHours, chosenMinutes))
+    }, [chosenHours, chosenMinutes])
+
+    const handleTabSwitch = (tabName) => {
+        setActiveTab(tabName)
+    }
+
+    const handleDayChange = (day) => {
+        if (day.className === 'prev-month') {
+            setChosenMonth(vdp.getMonthOffset(chosenMonth, -1))
+        } else if (day.className === 'next-month') {
+            setChosenMonth(vdp.getMonthOffset(chosenMonth, 1))
+        }
+        setChosenDay(day.day)
+    }
+
+    const handleMonthChange = (direction) => {
+        let month = vdp.getMonthOffset(chosenMonth, direction)
+        setChosenMonth(month)
+    }
+
+    const handleYearChange = (direction) => {
+        setChosenYear(chosenYear + direction)
+    }
+
+    const handleSave = () => {
+        onSave()
+    }
 
     return (
         <div id="vk-datetime-picker">
             <div className="vdp-wrapper">
                 
                 <div className="vdp-tabs-switcher">
-                    <button className="vdp-btn calendar active">
-                        <div><CalendarBtn /></div>
-                        <span>Дата</span>                    
+                    <button onClick={() => handleTabSwitch('calendar')} className={"vdp-btn calendar" + ((activeTab === 'calendar') ? ' active' : '')}>
+                        <div><CalendarIcon /></div>
+                        <span>Дата</span>
                     </button>
-                    <button className="vdp-btn time">                        
-                        <div><TimeBtn /></div>
+                    <button onClick={() => handleTabSwitch('time')} className={"vdp-btn time" + ((activeTab === 'time') ? ' active' : '')}>
+                        <div><TimeIcon /></div>
                         <span>Время</span>
                     </button>
                 </div>
 
                 <div className="vdp-tabs">
-                    <div className="calendar-tab active">
-                        <div id="year-switcher">
-                            <button className="vdp-btn previous"><PreviousBtn/></button>
-                            <span>2020</span>
-                            <button className="vdp-btn next"><NextBtn/></button>
+                    {
+                        activeTab === 'calendar' ? 
+                        <div className="calendar-tab">
+                            <div id="year-switcher">
+                                <button onClick={() => { handleYearChange(-1) }} className="vdp-btn previous"><PreviousBtn/></button>
+                                <span>{chosenYear}</span>
+                                <button onClick={() => { handleYearChange(1) }} className="vdp-btn next"><NextBtn/></button>
+                            </div>
+                            <div id="month-switcher">
+                                <button onClick={() => { handleMonthChange(-1) }} className="vdp-btn previous"><PreviousBtn /></button>
+                                <span>{chosenMonth}</span>
+                                <button onClick={() => { handleMonthChange(1) }} className="vdp-btn next"><NextBtn /></button>
+                            </div>
+                            <table id="vdp-calendar">
+                                <thead>
+                                    <tr>
+                                        <td>ПН</td><td>ВТ</td><td>СР</td><td>ЧТ</td><td>ПТ</td><td>СБ</td><td>ВС</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        calendarMonth &&
+                                        calendarMonth.map((week, i) => {
+                                            return(
+                                                <tr key={i}>
+                                                    {                                        
+                                                        week.map((day) => 
+                                                            <td 
+                                                                key={day.className + day.day}
+                                                                className={(day.day === chosenDay) && day.className === 'curr-month' ? day.className + ' selected-date' : day.className}
+                                                                onClick={() => handleDayChange(day)}
+                                                            >
+                                                                {day.day}
+                                                            </td>
+                                                        )
+                                                    }
+                                                </tr>
+                                            )
+                                        })
+                                    }
+                                </tbody>
+                            </table>
                         </div>
-                        <div id="month-switcher">
-                            <button className="vdp-btn previous"><PreviousBtn /></button>
-                            <span>Март</span>
-                            <button className="vdp-btn next"><NextBtn /></button>
-                        </div>
-                        <table id="vdp-calendar">
-                            <thead>
-                                <tr>
-                                    <td>ПН</td><td>ВТ</td><td>СР</td><td>ЧТ</td><td>ПТ</td><td>СБ</td><td>ВС</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>24</td><td>25</td><td>26</td><td>27</td><td>28</td><td>29</td><td>1</td>
-                                </tr>
-                                <tr>
-                                    <td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td>
-                                </tr>
-                                <tr>
-                                    <td>9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td>
-                                </tr>
-                                <tr>
-                                    <td>16</td><td>17</td><td>18</td><td>19</td><td>20</td><td>21</td><td>22</td>
-                                </tr>
-                                <tr>
-                                    <td>23</td><td>24</td><td>25</td><td>26</td><td>27</td><td>28</td><td>29</td>
-                                </tr>
-                                <tr>
-                                    <td>30</td><td>31</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="time-tab">
-                        sidfj
-                    </div>
-                </div>
-                <button id="submit-date" className="vdp-btn">Добавить дату</button>
+                        : ''
+                    }
 
-                <br /><br />Current Date is {chosenDate} <br />
-                Days in month {vdp.getWeekDay(2020, 3, 29)}
+                    {
+                        activeTab === 'time' ? 
+                        <div className="time-tab">
+                            <div className="clock">
+                                <div id="hours" className="clock-block">{chosenHours < 10 ? '0' + chosenHours : chosenHours}</div>
+                                <div className="clock-separator">:</div>
+                                <div id="minutes" className="clock-block">{chosenMinutes < 10 ? '0' + chosenMinutes : chosenMinutes}</div>
+                            </div>
+                            <div id="hours-slider" className="slider">
+                                <label> Часы: </label>
+                                <Slider defaultValue={0} onChange={hours => setChosenHours(hours)} max={23} min={0} step={1} />
+                            </div>
+                            <div id="minutes-slider" className="slider">
+                                <label> Минуты: </label>
+                                <Slider defaultValue={0} onChange={minutes => setChosenMinutes(minutes)} max={55} min={0} step={5} />
+                            </div>
+                        </div>
+                        : ''
+                    }
+
+                </div>
+                
+                <button onClick={() => handleSave()} id="submit-date" className="vdp-btn">Добавить дату</button>
+
             </div>
         </div>
+        
     )
 }
 
 VkDatetimePicker.propTypes = {
-    id: PropTypes.string.isRequired,
-    go: PropTypes.func.isRequired,
+    onSave: PropTypes.func.isRequired
 }
 
 export default VkDatetimePicker
